@@ -7,12 +7,17 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
-    "lint": "eslint 'src/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'",
+    "prisma:generate": "prisma generate",
+    "prisma:migration:create": "prisma migrate dev --create-only",
+    "prisma:migrate": "prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "6.17.1",
+    "@prisma/extension-accelerate": "^2.0.2",
     "dotenv": "^17.2.3",
     "express": "^5.1.0"
   },
@@ -22,6 +27,7 @@
     "eslint": "^9.37.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
+    "prisma": "^6.17.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

@@ -1,13 +1,11 @@
-
 # stw-api
 
-A small TypeScript Express API for managing a list of words (in-memory). Useful as a learning/demo project or starting point for a vocabulary API.
+A small TypeScript Express API for managing a list of words (in-memory).
 
 ## Features
 
 - RESTful endpoints for CRUD operations on words
 - Minimal TypeScript + Express setup
-- Environment-driven configuration (PORT, NODE_ENV)
 
 ## Requirements
 

@@ -1,86 +1,98 @@
 import { Request, Response, NextFunction } from 'express'
+import prismaClient from '../prima-client'
 
-import type { Word } from '../models/word'
-import { words } from '../models/word'
-
-export const createWord = (req: Request, res: Response, next: NextFunction) => {
+export const createWord = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    console.log('req.body', req.body)
     const { word, meaning, sentence } = req.body
 
-    const newWord: Word = {
-      id: words.length + 1,
-      word,
-      meaning,
-      sentence,
-    }
-    words.push(newWord)
+    const newWord = await prismaClient.word.create({
+      data: {
+        word,
+        meaning,
+        sentence,
+      },
+    })
+
     res.status(201).json(newWord)
   } catch (error) {
     next(error)
   }
 }
 
-export const getWords = (_req: Request, res: Response, next: NextFunction) => {
+export const getWords = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    const words = await prismaClient.word.findMany()
+
     res.json(words)
   } catch (error) {
     next(error)
   }
 }
 
-export const getWordById = (
+export const getWordById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const id = parseInt(req.params.id, 10)
-    const word = words.find((word: Word) => word.id === id)
+    const word = await prismaClient.word.findUnique({
+      where: { id },
+    })
+
     if (!word) {
       res.status(404).json({ message: 'Word not found' })
       return
     }
+
     res.json(word)
   } catch (error) {
     next(error)
   }
 }
 
-export const updateWord = (req: Request, res: Response, next: NextFunction) => {
+export const updateWord = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = parseInt(req.params.id, 10)
-    const wordIndex = words.findIndex((word: Word) => word.id === id)
-
-    if (wordIndex < 0) {
-      res.status(404).json({ message: 'Word not found' })
-      return
-    }
-
     const { meaning: newMeaning, sentence: newSentence } = req.body
 
-    words[wordIndex] = {
-      ...words[wordIndex],
-      meaning: newMeaning || words[wordIndex].meaning,
-      sentence: newSentence || words[wordIndex].sentence,
-    }
+    const updatedWord = await prismaClient.word.update({
+      where: { id },
+      data: {
+        meaning: newMeaning,
+        sentence: newSentence,
+      },
+    })
 
-    res.json(words[wordIndex])
+    res.json(updatedWord)
   } catch (error) {
     next(error)
   }
 }
 
-export const deleteWord = (req: Request, res: Response, next: NextFunction) => {
+export const deleteWord = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = parseInt(req.params.id, 10)
-    const wordIndex = words.findIndex((word: Word) => word.id === id)
+    const deletedItem = await prismaClient.word.delete({
+      where: { id },
+    })
 
-    if (wordIndex < 0) {
-      res.status(404).json({ message: 'Word not found' })
-      return
-    }
-    const deletedItem = words.splice(wordIndex, 1)[0]
     res.json(deletedItem)
   } catch (error) {
     next(error)
