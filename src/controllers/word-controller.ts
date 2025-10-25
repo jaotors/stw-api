@@ -1,23 +1,29 @@
 import { Request, Response, NextFunction } from 'express'
 import prismaClient from '../prima-client'
+import { getWordsFromAI } from '../services/openai'
 
-export const createWord = async (
-  req: Request,
+export const createWords = async (
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { word, meaning, sentence } = req.body
 
-    const newWord = await prismaClient.word.create({
-      data: {
-        word,
-        meaning,
-        sentence,
-      },
+    const result = await getWordsFromAI()
+    const words = result?.words
+
+    if (!words) {
+      res.status(500).json({ message: 'Failed to fetch words from AI' })
+      return
+    }
+
+    const wordCount = await prismaClient.word.createMany({
+      data: words,
+      skipDuplicates: true,
     })
 
-    res.status(201).json(newWord)
+    console.log('Created words count:', wordCount)
+    res.status(201).json(wordCount)
   } catch (error) {
     next(error)
   }
@@ -54,46 +60,6 @@ export const getWordById = async (
     }
 
     res.json(word)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const updateWord = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = parseInt(req.params.id, 10)
-    const { meaning: newMeaning, sentence: newSentence } = req.body
-
-    const updatedWord = await prismaClient.word.update({
-      where: { id },
-      data: {
-        meaning: newMeaning,
-        sentence: newSentence,
-      },
-    })
-
-    res.json(updatedWord)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const deleteWord = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = parseInt(req.params.id, 10)
-    const deletedItem = await prismaClient.word.delete({
-      where: { id },
-    })
-
-    res.json(deletedItem)
   } catch (error) {
     next(error)
   }
