@@ -26,11 +26,11 @@ export const getWordsFromAI = async () => {
         {
           role: 'user',
           content: `
-        - Provide a simple yet advanced words from A to Z.
-        - Make one sentence for each alphabet that you get.
-        - Include the meaning of it but don't add it in the sentence.
-        - Make the response to be the same as { words: [{"word": "example", "sentence": "This is an example sentence.", "meaning": "This is the meaning of the word"}, ...]}
-        `,
+            - Provide a simple yet advanced words from A to Z.
+            - Make one sentence for each alphabet that you get.
+            - Include the meaning of it but don't add it in the sentence.
+            - Make the response to be the same as { words: [{"word": "example", "sentence": "This is an example sentence.", "meaning": "This is the meaning of the word"}, ...]}
+          `,
         },
       ],
       text: {
